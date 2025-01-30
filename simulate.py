@@ -3,6 +3,7 @@ import pybullet_data
 import time
 
 physicsClient = p.connect(p.GUI)
+p.configureDebugVisualizer(p.COV_ENABLE_GUI,0)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
 
 planeId = p.loadURDF("plane.urdf")
