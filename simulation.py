@@ -20,8 +20,9 @@ class SIMULATION:
         for timeStep in range(1000):
             p.stepSimulation()
             self.robot.Sense(timeStep)
+            self.robot.Think(timeStep)
             self.robot.Act(timeStep)
-            time.sleep(1/20)
+            time.sleep(1/60)
 
     def __del__(self):
         p.disconnect()     
