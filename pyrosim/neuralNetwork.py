@@ -16,10 +16,6 @@ class NEURAL_NETWORK:
 
             self.Digest(line)
 
-        print(self.synapses)
-
-        exit()
-
         f.close()
 
     def Print(self):
@@ -42,7 +38,7 @@ class NEURAL_NETWORK:
 
             else:
 
-                self.neurons[neuronName].Update_Hidden_Or_Motor_Neuron()
+                self.neurons[neuronName].Update_Hidden_Or_Motor_Neuron(self.neurons, self.synapses)
 
     def Get_Neuron_Names(self):
 
