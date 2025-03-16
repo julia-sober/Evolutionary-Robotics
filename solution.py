@@ -6,13 +6,13 @@ import os
 class SOLUTION:
 
     def __init__(self):
-        self.weights = np.random.rand(3, 2)
+        self.weights = np.random.rand(3,2)
         self.weights = self.weights * 2 - 1
 
     def Evaluate(self):
-        self.Create_World(self)
-        self.Create_Body(self)
-        self.Create_Brain(self)
+        self.Create_World()
+        self.Create_Body()
+        self.Create_Brain()
         os.system("python3 simulate.py")
         fitnessFile = open("fitness.txt", "r")
         print(fitnessFile.readline())
@@ -43,8 +43,13 @@ class SOLUTION:
 
         for currentRow in range(0,3):
             for currentColumn in range(0,2):
-                print(currentRow, currentColumn)
-                self.weights[currentRow][currentColumn] = pyrosim.Send_Synapse(sourceNeuronName=currentRow, targetNeuronName=currentColumn+3, 
-                                                                               weight=random.uniform(-1,1))
+                randomWeight = random.uniform(-1,1)
+                pyrosim.Send_Synapse(sourceNeuronName=currentRow, targetNeuronName=currentColumn+3, weight=randomWeight)
+                self.weights[currentRow][currentColumn] = randomWeight
 
         pyrosim.End()
+
+    def Mutate(self):
+        randomRow = random.randint(0,2)
+        randomColumn = random.randint(0,1)
+        self.weights[randomRow][randomColumn] = random.random() * 2 - 1
