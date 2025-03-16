@@ -9,13 +9,13 @@ class SOLUTION:
         self.weights = np.random.rand(3,2)
         self.weights = self.weights * 2 - 1
 
-    def Evaluate(self):
+    def Evaluate(self, directOrGUI):
         self.Create_World()
         self.Create_Body()
         self.Create_Brain()
-        os.system("python3 simulate.py")
+        os.system("python3 simulate.py " + directOrGUI)
         fitnessFile = open("fitness.txt", "r")
-        print(fitnessFile.readline())
+        self.fitness = float(fitnessFile.readline())
         fitnessFile.close()
 
     def Create_World(self):
@@ -33,11 +33,9 @@ class SOLUTION:
 
     def Create_Brain(self):
         pyrosim.Start_NeuralNetwork("brain.nndf")
-
         pyrosim.Send_Sensor_Neuron(name=0, linkName="Torso")
         pyrosim.Send_Sensor_Neuron(name=1, linkName="BackLeg")
         pyrosim.Send_Sensor_Neuron(name=2, linkName="FrontLeg")
-
         pyrosim.Send_Motor_Neuron(name=3, jointName="Torso_BackLeg")
         pyrosim.Send_Motor_Neuron(name=4, jointName="Torso_FrontLeg")
 
