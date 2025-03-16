@@ -10,14 +10,16 @@ class SOLUTION:
         self.weights = self.weights * 2 - 1
 
     def Evaluate(self):
-        SOLUTION.Create_World(self)
-        SOLUTION.Create_Body(self)
-        SOLUTION.Create_Brain(self)
+        self.Create_World(self)
+        self.Create_Body(self)
+        self.Create_Brain(self)
         os.system("python3 simulate.py")
+        fitnessFile = open("fitness.txt", "r")
+        print(fitnessFile.readline())
+        fitnessFile.close()
 
     def Create_World(self):
         pyrosim.Start_SDF("world.sdf")
-        pyrosim.Send_Cube(name="Box", pos=[-2,2,0.5] , size=[1,1,1])
         pyrosim.End()
 
     def Create_Body(self):

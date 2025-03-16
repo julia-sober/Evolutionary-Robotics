@@ -48,15 +48,17 @@ def Get_Touch_Sensor_Value_For_Link(linkName):
 
     desiredLinkIndex = linkNamesToIndices[linkName]
 
-    pts = p.getContactPoints()
+    pts = p.getContactPoints() or []
 
-    for pt in pts:
+    if len(pts) > 0:
 
-        linkIndex = pt[4]
+        for pt in pts:
 
-        if ( linkIndex == desiredLinkIndex ):
+            linkIndex = pt[4]
 
-            touchValue = 1.0
+            if ( linkIndex == desiredLinkIndex ):
+
+                touchValue = 1.0
 
     return touchValue
 

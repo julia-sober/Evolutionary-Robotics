@@ -13,7 +13,6 @@ class ROBOT:
         self.nn = NEURAL_NETWORK("brain.nndf")
         pyrosim.Prepare_To_Simulate(self.robotId)
         ROBOT.Prepare_To_Sense(self)
-        # ROBOT.Prepare_To_Act(self)
 
     def Prepare_To_Sense(self):
         self.sensors = {}
@@ -24,20 +23,6 @@ class ROBOT:
     def Sense(self, timeStep):
         for linkName in self.sensors:
             self.sensors[linkName].Get_Value(timeStep)
-
-    # def Prepare_To_Act(self):
-    #     self.motors = {}
-    #     self.amplitude = np.pi/4.0
-    #     self.frequency = 30
-    #     self.offset = 0
-    #     for jointName in pyrosim.jointNamesToIndices:
-    #         if jointName == "Torso_FrontLeg":
-    #             frequency = self.frequency/2
-    #         else:
-    #             frequency = self.frequency
-    #         x = np.linspace(0, 2*np.pi, 1000)
-    #         targetAngles = self.amplitude* np.sin(frequency * x + self.offset)
-    #         self.motors[jointName] = MOTOR(jointName, targetAngles)
 
     def Act(self, timeStep):
         self.motors = {}
@@ -50,7 +35,15 @@ class ROBOT:
                 
     def Think(self, timeStep):
         self.nn.Update()
-        self.nn.Print()
+        # self.nn.Print()
+
+    def Get_Fitness(self):
+        stateOfLinkZero = p.getLinkState(self.robotId, 0)
+        positionOfLinkZero = stateOfLinkZero[0]
+        xCoordinateOfLinkZero = positionOfLinkZero[0]
+        f = open("fitness.txt", "w")
+        f.write(str(xCoordinateOfLinkZero))
+        f.close()
             
         
     
