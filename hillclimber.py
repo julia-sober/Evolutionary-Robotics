@@ -11,9 +11,6 @@ class HILLCLIMBER:
         self.parent.Evaluate(directOrGUI="GUI")
         for currentGeneration in range(c.numberOfGenerations):
             self.Evolve_For_One_Generation()
-        self.parent.Evaluate(directOrGUI="GUI")
-        print(self.parent.fitness)
-        print(self.child.fitness)
         
     def Evolve_For_One_Generation(self):
         self.Spawn()
@@ -40,5 +37,3 @@ class HILLCLIMBER:
 
     def Show_Best(self):
         self.parent.Evaluate(directOrGUI="GUI")
-        print(self.parent.fitness)
-        print(self.child.fitness)

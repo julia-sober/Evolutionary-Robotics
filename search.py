@@ -4,4 +4,4 @@ from solution import SOLUTION
 hc = HILLCLIMBER()
 solution = SOLUTION()
 hc.Evolve()
-# hc.Show_Best()
+hc.Show_Best()
