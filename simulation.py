@@ -24,5 +24,8 @@ class SIMULATION:
             self.robot.Act(timeStep)
             time.sleep(1/60)
 
+    def Get_Fitness(self):
+        pass
+
     def __del__(self):
         p.disconnect()     
