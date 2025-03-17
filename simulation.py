@@ -9,8 +9,9 @@ import constants as c
 
 class SIMULATION:
     
-    def __init__(self, directOrGUI):
+    def __init__(self, directOrGUI, solutionID):
         self.directOrGUI = directOrGUI
+        self.solutionID = solutionID
         if directOrGUI == "DIRECT":
             self.physicsClient = p.connect(p.DIRECT)
         else:
@@ -20,7 +21,7 @@ class SIMULATION:
         p.configureDebugVisualizer(p.COV_ENABLE_GUI,0)
         p.setGravity(0, 0, -9.8)
         self.world = WORLD()
-        self.robot = ROBOT()
+        self.robot = ROBOT(self.solutionID)
 
     def Run(self):
         for timeStep in range(c.numTimeSteps):
@@ -29,7 +30,7 @@ class SIMULATION:
             self.robot.Think(timeStep)
             self.robot.Act(timeStep)
             if self.directOrGUI == "GUI":
-                time.sleep(1/120)
+                time.sleep(1/180)
 
     def Get_Fitness(self):
         self.robot.Get_Fitness()
