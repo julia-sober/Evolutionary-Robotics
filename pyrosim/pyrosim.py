@@ -48,9 +48,9 @@ def Get_Touch_Sensor_Value_For_Link(linkName):
 
     desiredLinkIndex = linkNamesToIndices[linkName]
 
-    pts = p.getContactPoints() or []
+    pts = p.getContactPoints()
 
-    if len(pts) > 0:
+    if pts is not None:
 
         for pt in pts:
 
