@@ -1,3 +1,3 @@
-numberOfGenerations = 15
+numberOfGenerations = 10
 numTimeSteps = 1000
-populationSize = 2
+populationSize = 10
