@@ -1,2 +1,2 @@
-numberOfGenerations = 15
+numberOfGenerations = 400
 numTimeSteps = 1000
