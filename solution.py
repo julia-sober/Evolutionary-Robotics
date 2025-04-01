@@ -72,15 +72,18 @@ class SOLUTION:
         pyrosim.Send_Sensor_Neuron(name=3, linkName="RightLowerLeg")
 
         pyrosim.Send_Hidden_Neuron(name=4)
+        pyrosim.Send_Hidden_Neuron(name=5)
+        pyrosim.Send_Hidden_Neuron(name=6)
+        pyrosim.Send_Hidden_Neuron(name=7)
 
-        pyrosim.Send_Motor_Neuron(name=5, jointName="Torso_BackLeg")
-        pyrosim.Send_Motor_Neuron(name=6, jointName="Torso_FrontLeg")
-        pyrosim.Send_Motor_Neuron(name=7, jointName="Torso_LeftLeg")
-        pyrosim.Send_Motor_Neuron(name=8, jointName="Torso_RightLeg")
-        pyrosim.Send_Motor_Neuron(name=9, jointName="FrontLeg_FrontLowerLeg")
-        pyrosim.Send_Motor_Neuron(name=10, jointName="BackLeg_BackLowerLeg")
-        pyrosim.Send_Motor_Neuron(name=11, jointName="LeftLeg_LeftLowerLeg")
-        pyrosim.Send_Motor_Neuron(name=12, jointName="LeftLeg_LeftLowerLeg")
+        pyrosim.Send_Motor_Neuron(name=8, jointName="Torso_BackLeg")
+        pyrosim.Send_Motor_Neuron(name=9, jointName="Torso_FrontLeg")
+        pyrosim.Send_Motor_Neuron(name=10, jointName="Torso_LeftLeg")
+        pyrosim.Send_Motor_Neuron(name=11, jointName="Torso_RightLeg")
+        pyrosim.Send_Motor_Neuron(name=12, jointName="FrontLeg_FrontLowerLeg")
+        pyrosim.Send_Motor_Neuron(name=13, jointName="BackLeg_BackLowerLeg")
+        pyrosim.Send_Motor_Neuron(name=14, jointName="LeftLeg_LeftLowerLeg")
+        pyrosim.Send_Motor_Neuron(name=15, jointName="LeftLeg_LeftLowerLeg")
 
         for currentRow in range(0,c.numSensorNeurons):
             for currentColumn in range(0,c.numHiddenNeurons):
