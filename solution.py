@@ -98,13 +98,15 @@ class SOLUTION:
         pyrosim.End()
 
     def Mutate(self):
-        # Mutating a sensor to hidden and hidden to motor neuron (may want to change)
-        randomRow = random.randint(0,c.numSensorNeurons-1)
-        randomColumn = random.randint(0,c.numHiddenNeurons-1)
-        self.sensorToHiddenWeights[randomRow][randomColumn] = random.random() * 2 - 1
-        randomRow = random.randint(0,c.numHiddenNeurons-1)
-        randomColumn = random.randint(0,c.numMotorNeurons-1)
-        self.hiddenToMotorWeights[randomRow][randomColumn] = random.random() * 2 - 1
+        coinFlip = random.randint(0, 1)
+        if coinFlip == 0:
+            randomRow = random.randint(0,c.numSensorNeurons-1)
+            randomColumn = random.randint(0,c.numHiddenNeurons-1)
+            self.sensorToHiddenWeights[randomRow][randomColumn] = random.random() * 2 - 1
+        elif coinFlip == 1:
+            randomRow = random.randint(0,c.numHiddenNeurons-1)
+            randomColumn = random.randint(0,c.numMotorNeurons-1)
+            self.hiddenToMotorWeights[randomRow][randomColumn] = random.random() * 2 - 1
 
     def Set_ID(self, newID):
         self.myID = newID
