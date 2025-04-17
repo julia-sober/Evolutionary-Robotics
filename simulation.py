@@ -27,8 +27,9 @@ class SIMULATION:
         for timeStep in range(c.numTimeSteps):
             p.stepSimulation()
             self.robot.Sense(timeStep)
-            self.robot.Think(timeStep)
-            self.robot.Act(timeStep)
+            self.robot.Think()
+            self.robot.Record_Position(timeStep)
+            self.robot.Act()
             if self.directOrGUI == "GUI":
                 time.sleep(c.sleepSize)
 

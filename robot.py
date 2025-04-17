@@ -14,8 +14,8 @@ class ROBOT:
         self.robotId = p.loadURDF("body.urdf")
         self.solutionID = solutionID
         self.nn = NEURAL_NETWORK("brain" + str(solutionID) + ".nndf")
-        self.sensorVals = np.zeros((c.numTimeSteps, 4))
-        self.torsoSensorVals = np.zeros(c.numTimeSteps)
+        self.sensorVals = np.zeros((c.numTimeSteps, 9))
+        self.zPositions = np.zeros(c.numTimeSteps)
 
         os.system("rm " + "brain" + str(solutionID) + ".nndf")
         pyrosim.Prepare_To_Simulate(self.robotId)
@@ -31,13 +31,10 @@ class ROBOT:
         ctr = 0
         for linkName in self.sensors:
             self.sensors[linkName].Get_Value(timeStep)
-            if "LowerLeg" in linkName:
-                self.sensorVals[timeStep][ctr] = self.sensors[linkName].values[timeStep]
-                ctr += 1
-            elif "Torso" == linkName:
-                self.torsoSensorVals[timeStep] = self.sensors[linkName].values[timeStep]
+            self.sensorVals[timeStep][ctr] = self.sensors[linkName].values[timeStep]
+            ctr += 1
 
-    def Act(self, timeStep):
+    def Act(self):
         self.motors = {}
         for neuronName in self.nn.Get_Neuron_Names():
             if self.nn.Is_Motor_Neuron(neuronName):
@@ -46,9 +43,15 @@ class ROBOT:
                 self.motors[jointName] = MOTOR(jointName)
                 self.motors[jointName].Set_Value(self.robotId, desiredAngle*c.motorJointRange)
                 
-    def Think(self, timeStep):
+    def Think(self):
         self.nn.Update()
         # self.nn.Print()
+
+    def Record_Position(self, timeStep):
+        basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
+        basePosition = basePositionAndOrientation[0]
+        zPosition = basePosition[2]
+        self.zPositions[timeStep] = zPosition
 
     def Get_Fitness(self):
         # basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
@@ -58,20 +61,54 @@ class ROBOT:
         # f.write(str(xPosition))
         # f.close()
 
-        longestConsecutive = 0
+        bestJumpScore = 0
+        bestJumpHeight = 0
+        bestJumpDuration = 0
+
         currentStreak = 0
-        timeStepCtr = 0
-        for row in self.sensorVals:
-            if row.sum() == len(row) * -1 and self.torsoSensorVals[timeStepCtr] == -1:
+        streakStart = None
+
+        for t, row in enumerate(self.sensorVals):
+            if row.sum() == len(row) * -1:
+                if currentStreak == 0:
+                    streakStart = t
                 currentStreak += 1
-                if currentStreak > longestConsecutive:
-                    longestConsecutive = currentStreak
             else:
+                if currentStreak > 0 and streakStart is not None:
+                    streakEnd = t
+                    peak = max(self.zPositions[streakStart:streakEnd])
+                    # print(peak, currentStreak)
+                    jumpScore = peak * currentStreak  
+
+                    if jumpScore > bestJumpScore:
+                        bestJumpScore = jumpScore
+                        bestJumpHeight = peak
+                        bestJumpDuration = currentStreak
+
                 currentStreak = 0
-            timeStepCtr += 1
+                streakStart = None
+
+        # Check final streak
+        if currentStreak > 0 and streakStart is not None:
+            streakEnd = len(self.sensorVals)
+            peak = max(self.zPositions[streakStart:streakEnd])
+            # print(peak, currentStreak)
+            jumpScore = peak * currentStreak
+            if jumpScore > bestJumpScore:
+                bestJumpScore = jumpScore
+                bestJumpHeight = peak
+                bestJumpDuration = currentStreak
+
+        basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
+        basePosition = basePositionAndOrientation[0]
+        xPosition = basePosition[0]
+        yPosition = basePosition[1]
+
+        z_velocities = np.diff(self.zPositions)
+        max_velocity = max(z_velocities)
 
         f = open("tmp" + str(self.solutionID) + ".txt", "w")
-        f.write(str(longestConsecutive * c.sleepSize))
+        f.write(str(bestJumpScore - 0.2 * (abs(xPosition) + abs(yPosition)) + 0.5 * max_velocity))
         f.close()
 
         os.system("mv " + "tmp" + str(self.solutionID) + ".txt " + "fitness" + str(self.solutionID) + ".txt")            
