@@ -14,6 +14,9 @@ class ROBOT:
         self.robotId = p.loadURDF("body.urdf")
         self.solutionID = solutionID
         self.nn = NEURAL_NETWORK("brain" + str(solutionID) + ".nndf")
+        self.sensorVals = np.zeros((c.numTimeSteps, 4))
+        self.torsoSensorVals = np.zeros(c.numTimeSteps)
+
         os.system("rm " + "brain" + str(solutionID) + ".nndf")
         pyrosim.Prepare_To_Simulate(self.robotId)
         ROBOT.Prepare_To_Sense(self)
@@ -21,12 +24,18 @@ class ROBOT:
     def Prepare_To_Sense(self):
         self.sensors = {}
         for linkName in pyrosim.linkNamesToIndices:
-            values = np.zeros(1000)
+            values = np.zeros(c.numTimeSteps)
             self.sensors[linkName] = SENSOR(linkName, values)
 
     def Sense(self, timeStep):
+        ctr = 0
         for linkName in self.sensors:
             self.sensors[linkName].Get_Value(timeStep)
+            if "LowerLeg" in linkName:
+                self.sensorVals[timeStep][ctr] = self.sensors[linkName].values[timeStep]
+                ctr += 1
+            elif "Torso" == linkName:
+                self.torsoSensorVals[timeStep] = self.sensors[linkName].values[timeStep]
 
     def Act(self, timeStep):
         self.motors = {}
@@ -42,15 +51,29 @@ class ROBOT:
         # self.nn.Print()
 
     def Get_Fitness(self):
-        basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
-        basePosition = basePositionAndOrientation[0]
-        xPosition = basePosition[0]
+        # basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
+        # basePosition = basePositionAndOrientation[0]
+        # xPosition = basePosition[0]
+        # f = open("tmp" + str(self.solutionID) + ".txt", "w")
+        # f.write(str(xPosition))
+        # f.close()
+
+        longestConsecutive = 0
+        currentStreak = 0
+        timeStepCtr = 0
+        for row in self.sensorVals:
+            if row.sum() == len(row) * -1 and self.torsoSensorVals[timeStepCtr] == -1:
+                currentStreak += 1
+                if currentStreak > longestConsecutive:
+                    longestConsecutive = currentStreak
+            else:
+                currentStreak = 0
+            timeStepCtr += 1
+
         f = open("tmp" + str(self.solutionID) + ".txt", "w")
-        f.write(str(xPosition))
+        f.write(str(longestConsecutive * c.sleepSize))
         f.close()
-        print("Created ", "tmp" + str(self.solutionID) + ".txt")
-        os.system("mv " + "tmp" + str(self.solutionID) + ".txt " + "fitness" + str(self.solutionID) + ".txt")
-        print("Created ", "fitness" + str(self.solutionID) + ".txt")
-            
+
+        os.system("mv " + "tmp" + str(self.solutionID) + ".txt " + "fitness" + str(self.solutionID) + ".txt")            
         
     
