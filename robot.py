@@ -7,19 +7,45 @@ import pyrosim.pyrosim as pyrosim
 from pyrosim.neuralNetwork import NEURAL_NETWORK
 import os
 import constants as c
+import shutil
+import time
+
 
 class ROBOT:
     
     def __init__(self, solutionID):
-        self.robotId = p.loadURDF("body.urdf")
-        self.solutionID = solutionID
-        self.nn = NEURAL_NETWORK("brain" + str(solutionID) + ".nndf")
-        self.sensorVals = np.zeros((c.numTimeSteps, 9))
-        self.zPositions = np.zeros(c.numTimeSteps)
+        urdf_path = os.path.join(os.path.dirname(__file__), "body.urdf")
+        try:
+            self.robotId = p.loadURDF(urdf_path)
+            print()
+            print(f"ROBOTID = {self.robotId}!!!!!!!!!!")
+            print()
+            self.error = False
+            self.solutionID = solutionID
+            self.nn = NEURAL_NETWORK("brain" + str(solutionID) + ".nndf")
+            self.sensorVals = np.zeros((c.numTimeSteps, 9))
+            self.zPositions = np.zeros(c.numTimeSteps)
+            os.system("rm " + "brain" + str(solutionID) + ".nndf")
+            pyrosim.Prepare_To_Simulate(self.robotId)
+            ROBOT.Prepare_To_Sense(self)
+        except Exception as e:
+            print(f"Error in simulation: {e}")
+            self.robotId = np.nan
+            self.error = True
+            self.solutionID = solutionID
+            self.nn = NEURAL_NETWORK("brain" + str(solutionID) + ".nndf")
+            self.sensorVals = np.zeros((c.numTimeSteps, 9))
+            self.zPositions = np.zeros(c.numTimeSteps)
+            os.system("rm " + "brain" + str(solutionID) + ".nndf")
 
-        os.system("rm " + "brain" + str(solutionID) + ".nndf")
-        pyrosim.Prepare_To_Simulate(self.robotId)
-        ROBOT.Prepare_To_Sense(self)
+        # self.solutionID = solutionID
+        # self.nn = NEURAL_NETWORK("brain" + str(solutionID) + ".nndf")
+        # self.sensorVals = np.zeros((c.numTimeSteps, 9))
+        # self.zPositions = np.zeros(c.numTimeSteps)
+
+        # os.system("rm " + "brain" + str(solutionID) + ".nndf")
+        # pyrosim.Prepare_To_Simulate(self.robotId)
+        # ROBOT.Prepare_To_Sense(self)
 
     def Prepare_To_Sense(self):
         self.sensors = {}
@@ -33,14 +59,17 @@ class ROBOT:
             self.sensors[linkName].Get_Value(timeStep)
             self.sensorVals[timeStep][ctr] = self.sensors[linkName].values[timeStep]
             ctr += 1
+        print(f"Sensing at timestep {timeStep}")
 
     def Act(self):
+        print("Acting...")
         self.motors = {}
         for neuronName in self.nn.Get_Neuron_Names():
             if self.nn.Is_Motor_Neuron(neuronName):
                 jointName = self.nn.Get_Motor_Neurons_Joint(neuronName)
                 desiredAngle = self.nn.Get_Value_Of(neuronName)
                 self.motors[jointName] = MOTOR(jointName)
+                print(f"Setting motor {jointName} to angle {desiredAngle*c.motorJointRange}")
                 self.motors[jointName].Set_Value(self.robotId, desiredAngle*c.motorJointRange)
                 
     def Think(self):
@@ -53,7 +82,7 @@ class ROBOT:
         zPosition = basePosition[2]
         self.zPositions[timeStep] = zPosition
 
-    def Get_Fitness(self):
+    def Get_Fitness(self, simulationError):
         # basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
         # basePosition = basePositionAndOrientation[0]
         # xPosition = basePosition[0]
@@ -130,10 +159,22 @@ class ROBOT:
             if currentStreak > bestJumpDuration:
                 bestJumpDuration = currentStreak
 
-        f = open("tmp" + str(self.solutionID) + ".txt", "w")
-        f.write(str(bestJumpDuration*c.sleepSize))
-        f.close()
+        if self.error or simulationError:
+            bestJumpDuration = np.nan
 
-        os.system("mv " + "tmp" + str(self.solutionID) + ".txt " + "fitness" + str(self.solutionID) + ".txt")            
+        f = open("tmp" + str(self.solutionID) + ".txt", "w")
+        f.write(str(bestJumpDuration))
+        f.close()
+        time.sleep(0.1)
+
+        print()
+        print("Created " + "tmp" + str(self.solutionID) + ".txt")
+
+        # os.system("mv " + "tmp" + str(self.solutionID) + ".txt " + "fitness" + str(self.solutionID) + ".txt")  
+        # shutil.move("tmp" + str(self.solutionID) + ".txt", "fitness" + str(self.solutionID) + ".txt")
+        os.rename("tmp" + str(self.solutionID) + ".txt", "fitness" + str(self.solutionID) + ".txt")
+
+        print()
+        print("Writing to:", os.path.abspath("fitness" + str(self.solutionID) + ".txt"))        
         
     
