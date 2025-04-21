@@ -88,6 +88,48 @@ class SOLUTION:
                 
             pyrosim.End()
 
+        else:
+            pyrosim.Start_NeuralNetwork("brain" + str(self.myID) + ".nndf")
+  
+            pyrosim.Send_Sensor_Neuron(name=0, linkName="FrontLowerLeg")
+            pyrosim.Send_Sensor_Neuron(name=1, linkName="BackLowerLeg")
+            pyrosim.Send_Sensor_Neuron(name=2, linkName="LeftLowerLeg")
+            pyrosim.Send_Sensor_Neuron(name=3, linkName="RightLowerLeg")
+
+            pyrosim.Send_Hidden_Neuron(name=4)
+            pyrosim.Send_Hidden_Neuron(name=5)
+            pyrosim.Send_Hidden_Neuron(name=6)
+            pyrosim.Send_Hidden_Neuron(name=7)
+            pyrosim.Send_Hidden_Neuron(name=8)
+            pyrosim.Send_Hidden_Neuron(name=9)
+            pyrosim.Send_Hidden_Neuron(name=10)
+            pyrosim.Send_Hidden_Neuron(name=11)
+
+            pyrosim.Send_Motor_Neuron(name=12, jointName="Torso_BackLeg")
+            pyrosim.Send_Motor_Neuron(name=13, jointName="Torso_FrontLeg")
+            pyrosim.Send_Motor_Neuron(name=14, jointName="Torso_LeftLeg")
+            pyrosim.Send_Motor_Neuron(name=15, jointName="Torso_RightLeg")
+            pyrosim.Send_Motor_Neuron(name=16, jointName="FrontLeg_FrontLowerLeg")
+            pyrosim.Send_Motor_Neuron(name=17, jointName="BackLeg_BackLowerLeg")
+            pyrosim.Send_Motor_Neuron(name=18, jointName="LeftLeg_LeftLowerLeg")
+            pyrosim.Send_Motor_Neuron(name=19, jointName="LeftLeg_LeftLowerLeg")
+
+            for currentRow in range(0,c.numSensorNeurons):
+                for currentColumn in range(0,c.numHiddenNeurons):
+                    pyrosim.Send_Synapse(sourceNeuronName=currentRow, targetNeuronName=currentColumn+c.numSensorNeurons, 
+                                        weight=self.sensorToHiddenWeights[currentRow][currentColumn])
+                    
+            for currentRow in range(0,c.numHiddenNeurons):
+                for currentColumn in range(0,c.numMotorNeurons):
+                    pyrosim.Send_Synapse(sourceNeuronName=currentRow+c.numSensorNeurons, 
+                                        targetNeuronName=currentColumn+c.numHiddenNeurons+c.numSensorNeurons, 
+                                        weight=self.hiddenToMotorWeights[currentRow][currentColumn])
+                    
+            for currentRow in range(0,c.numSensorNeurons):
+                pyrosim.Send_Synapse(sourceNeuronName=currentRow, targetNeuronName=currentRow, weight=self.recurrentWeights[currentRow])
+                
+            pyrosim.End()
+
     def Mutate(self):
         if self.testVariant == "A":
             randomRow = random.randint(0,c.numSensorNeurons-1)
