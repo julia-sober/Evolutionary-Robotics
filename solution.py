@@ -8,23 +8,16 @@ import constants as c
 class SOLUTION:
 
     def __init__(self, myID):
-        self.sensorToHiddenWeights = np.random.rand(c.numSensorNeurons,c.numHiddenNeurons)
-        self.sensorToHiddenWeights = self.sensorToHiddenWeights * 2 - 1
-
-        self.hiddenToMotorWeights = np.random.rand(c.numHiddenNeurons,c.numMotorNeurons)
-        self.hiddenToMotorWeights = self.hiddenToMotorWeights * 2 - 1
-
-        self.recurrentWeights = np.random.rand(c.numSensorNeurons)
-        self.recurrentWeights = self.recurrentWeights * 2 - 1
-
+        self.weights = np.random.rand(c.numSensorNeurons,c.numMotorNeurons)
+        self.weights = self.weights * 2 - 1
         self.myID = myID
         
     def Start_Simulation(self, directOrGUI):
         self.Create_World()
         self.Create_Body()
         self.Create_Brain()
-        # os.system("python3 simulate.py " + directOrGUI + " " + str(self.myID) + " 2&>1" + " &")
-        os.system("python3 simulate.py " + directOrGUI + " " + str(self.myID) + " &")
+        os.system("python3 simulate.py " + directOrGUI + " " + str(self.myID) + " 2&>1" + " &")
+        # os.system("python3 simulate.py " + directOrGUI + " " + str(self.myID) + " &")
 
     def Wait_For_Simulation_To_End(self):
         fitnessFileName = "fitness" + str(self.myID) + ".txt"
@@ -77,54 +70,26 @@ class SOLUTION:
         pyrosim.Send_Sensor_Neuron(name=2, linkName="LeftLowerLeg")
         pyrosim.Send_Sensor_Neuron(name=3, linkName="RightLowerLeg")
 
-        pyrosim.Send_Hidden_Neuron(name=4)
-        pyrosim.Send_Hidden_Neuron(name=5)
-        pyrosim.Send_Hidden_Neuron(name=6)
-        pyrosim.Send_Hidden_Neuron(name=7)
-        pyrosim.Send_Hidden_Neuron(name=8)
-        pyrosim.Send_Hidden_Neuron(name=9)
-        pyrosim.Send_Hidden_Neuron(name=10)
-        pyrosim.Send_Hidden_Neuron(name=11)
-
-        pyrosim.Send_Motor_Neuron(name=12, jointName="Torso_BackLeg")
-        pyrosim.Send_Motor_Neuron(name=13, jointName="Torso_FrontLeg")
-        pyrosim.Send_Motor_Neuron(name=14, jointName="Torso_LeftLeg")
-        pyrosim.Send_Motor_Neuron(name=15, jointName="Torso_RightLeg")
-        pyrosim.Send_Motor_Neuron(name=16, jointName="FrontLeg_FrontLowerLeg")
-        pyrosim.Send_Motor_Neuron(name=17, jointName="BackLeg_BackLowerLeg")
-        pyrosim.Send_Motor_Neuron(name=18, jointName="LeftLeg_LeftLowerLeg")
-        pyrosim.Send_Motor_Neuron(name=19, jointName="LeftLeg_LeftLowerLeg")
+        pyrosim.Send_Motor_Neuron(name=4, jointName="Torso_BackLeg")
+        pyrosim.Send_Motor_Neuron(name=5, jointName="Torso_FrontLeg")
+        pyrosim.Send_Motor_Neuron(name=6, jointName="Torso_LeftLeg")
+        pyrosim.Send_Motor_Neuron(name=7, jointName="Torso_RightLeg")
+        pyrosim.Send_Motor_Neuron(name=8, jointName="FrontLeg_FrontLowerLeg")
+        pyrosim.Send_Motor_Neuron(name=9, jointName="BackLeg_BackLowerLeg")
+        pyrosim.Send_Motor_Neuron(name=10, jointName="LeftLeg_LeftLowerLeg")
+        pyrosim.Send_Motor_Neuron(name=11, jointName="LeftLeg_LeftLowerLeg")
 
         for currentRow in range(0,c.numSensorNeurons):
-            for currentColumn in range(0,c.numHiddenNeurons):
-                pyrosim.Send_Synapse(sourceNeuronName=currentRow, targetNeuronName=currentColumn+c.numSensorNeurons, 
-                                     weight=self.sensorToHiddenWeights[currentRow][currentColumn])
-                
-        for currentRow in range(0,c.numHiddenNeurons):
             for currentColumn in range(0,c.numMotorNeurons):
-                pyrosim.Send_Synapse(sourceNeuronName=currentRow+c.numSensorNeurons, 
-                                     targetNeuronName=currentColumn+c.numHiddenNeurons+c.numSensorNeurons, 
-                                     weight=self.hiddenToMotorWeights[currentRow][currentColumn])
-                
-        for currentRow in range(0,c.numSensorNeurons):
-            pyrosim.Send_Synapse(sourceNeuronName=currentRow, targetNeuronName=currentRow, weight=self.recurrentWeights[currentRow])
+                pyrosim.Send_Synapse(sourceNeuronName=currentRow, targetNeuronName=currentColumn+c.numSensorNeurons, 
+                                     weight=self.weights[currentRow][currentColumn])
             
         pyrosim.End()
-        # exit()
 
     def Mutate(self):
-        coinFlip = random.randint(0, 2)
-        if coinFlip == 0:
-            randomRow = random.randint(0,c.numSensorNeurons-1)
-            randomColumn = random.randint(0,c.numHiddenNeurons-1)
-            self.sensorToHiddenWeights[randomRow][randomColumn] = random.random() * 2 - 1
-        elif coinFlip == 1:
-            randomRow = random.randint(0,c.numHiddenNeurons-1)
-            randomColumn = random.randint(0,c.numMotorNeurons-1)
-            self.hiddenToMotorWeights[randomRow][randomColumn] = random.random() * 2 - 1
-        elif coinFlip == 2:
-            randomRow = random.randint(0,c.numSensorNeurons-1)
-            self.recurrentWeights[randomRow] = random.random() * 2 - 1
+        randomRow = random.randint(0,c.numSensorNeurons-1)
+        randomColumn = random.randint(0,c.numMotorNeurons-1)
+        self.weights[randomRow][randomColumn] = random.random() * 2 - 1
 
     def Set_ID(self, newID):
         self.myID = newID
