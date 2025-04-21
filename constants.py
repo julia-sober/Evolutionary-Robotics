@@ -1,7 +1,7 @@
 numTimeSteps = 1000
 sleepSize = 1/180
 
-numberOfGenerations = 10
+numberOfGenerations = 50
 populationSize = 10
 
 numSensorNeurons = 4

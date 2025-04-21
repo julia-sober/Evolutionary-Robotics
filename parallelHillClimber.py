@@ -22,6 +22,7 @@ class PARALLEL_HILL_CLIMBER:
         for currentGeneration in range(1, c.numberOfGenerations):
             self.Evolve_For_One_Generation(currentGeneration)
         np.save("data/fitness_values_" + self.testVariant + ".npy", self.fitnessVals)
+        np.savetxt("data/fitness_values_" + self.testVariant + ".txt", self.fitnessVals)
         
     def Evolve_For_One_Generation(self, currentGeneration):
         self.Spawn()
