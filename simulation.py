@@ -12,6 +12,7 @@ class SIMULATION:
     
     def __init__(self, directOrGUI, solutionID):
         print(f"SIMULATION init called with {directOrGUI} {solutionID}")
+        
         self.directOrGUI = directOrGUI
         self.solutionID = solutionID
         if directOrGUI == "DIRECT":
@@ -22,11 +23,7 @@ class SIMULATION:
         p.setAdditionalSearchPath(pybullet_data.getDataPath())
         p.configureDebugVisualizer(p.COV_ENABLE_GUI,0)
         p.setGravity(0, 0, -9.8)
-        # p.setPhysicsEngineParameter(enableFileCaching=0)
-        # p.setPhysicsEngineParameter(deterministicOverlappingPairs=1)
-        # p.setPhysicsEngineParameter(numSolverIterations=150)
-        # p.setPhysicsEngineParameter(contactBreakingThreshold=0.001)
-
+    
         try:
             self.robot = ROBOT(self.solutionID)
             self.world = WORLD()
