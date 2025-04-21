@@ -64,33 +64,35 @@ class SOLUTION:
         pyrosim.End()
 
     def Create_Brain(self):
-        pyrosim.Start_NeuralNetwork("brain" + str(self.myID) + ".nndf")
-  
-        pyrosim.Send_Sensor_Neuron(name=0, linkName="FrontLowerLeg")
-        pyrosim.Send_Sensor_Neuron(name=1, linkName="BackLowerLeg")
-        pyrosim.Send_Sensor_Neuron(name=2, linkName="LeftLowerLeg")
-        pyrosim.Send_Sensor_Neuron(name=3, linkName="RightLowerLeg")
+        if self.testVariant == "A":
+            pyrosim.Start_NeuralNetwork("brain" + str(self.myID) + ".nndf")
+    
+            pyrosim.Send_Sensor_Neuron(name=0, linkName="FrontLowerLeg")
+            pyrosim.Send_Sensor_Neuron(name=1, linkName="BackLowerLeg")
+            pyrosim.Send_Sensor_Neuron(name=2, linkName="LeftLowerLeg")
+            pyrosim.Send_Sensor_Neuron(name=3, linkName="RightLowerLeg")
 
-        pyrosim.Send_Motor_Neuron(name=4, jointName="Torso_BackLeg")
-        pyrosim.Send_Motor_Neuron(name=5, jointName="Torso_FrontLeg")
-        pyrosim.Send_Motor_Neuron(name=6, jointName="Torso_LeftLeg")
-        pyrosim.Send_Motor_Neuron(name=7, jointName="Torso_RightLeg")
-        pyrosim.Send_Motor_Neuron(name=8, jointName="FrontLeg_FrontLowerLeg")
-        pyrosim.Send_Motor_Neuron(name=9, jointName="BackLeg_BackLowerLeg")
-        pyrosim.Send_Motor_Neuron(name=10, jointName="LeftLeg_LeftLowerLeg")
-        pyrosim.Send_Motor_Neuron(name=11, jointName="LeftLeg_LeftLowerLeg")
+            pyrosim.Send_Motor_Neuron(name=4, jointName="Torso_BackLeg")
+            pyrosim.Send_Motor_Neuron(name=5, jointName="Torso_FrontLeg")
+            pyrosim.Send_Motor_Neuron(name=6, jointName="Torso_LeftLeg")
+            pyrosim.Send_Motor_Neuron(name=7, jointName="Torso_RightLeg")
+            pyrosim.Send_Motor_Neuron(name=8, jointName="FrontLeg_FrontLowerLeg")
+            pyrosim.Send_Motor_Neuron(name=9, jointName="BackLeg_BackLowerLeg")
+            pyrosim.Send_Motor_Neuron(name=10, jointName="LeftLeg_LeftLowerLeg")
+            pyrosim.Send_Motor_Neuron(name=11, jointName="LeftLeg_LeftLowerLeg")
 
-        for currentRow in range(0,c.numSensorNeurons):
-            for currentColumn in range(0,c.numMotorNeurons):
-                pyrosim.Send_Synapse(sourceNeuronName=currentRow, targetNeuronName=currentColumn+c.numSensorNeurons, 
-                                     weight=self.weights[currentRow][currentColumn])
-            
-        pyrosim.End()
+            for currentRow in range(0,c.numSensorNeurons):
+                for currentColumn in range(0,c.numMotorNeurons):
+                    pyrosim.Send_Synapse(sourceNeuronName=currentRow, targetNeuronName=currentColumn+c.numSensorNeurons, 
+                                        weight=self.weights[currentRow][currentColumn])
+                
+            pyrosim.End()
 
     def Mutate(self):
-        randomRow = random.randint(0,c.numSensorNeurons-1)
-        randomColumn = random.randint(0,c.numMotorNeurons-1)
-        self.weights[randomRow][randomColumn] = random.random() * 2 - 1
+        if self.testVariant == "A":
+            randomRow = random.randint(0,c.numSensorNeurons-1)
+            randomColumn = random.randint(0,c.numMotorNeurons-1)
+            self.weights[randomRow][randomColumn] = random.random() * 2 - 1
 
     def Set_ID(self, newID):
         self.myID = newID
