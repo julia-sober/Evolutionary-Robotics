@@ -6,6 +6,7 @@ import pybullet_data
 import pyrosim.pyrosim as pyrosim
 import time
 import constants as c
+import os
 
 class SIMULATION:
     
@@ -37,4 +38,4 @@ class SIMULATION:
         self.robot.Get_Fitness()
 
     def __del__(self):
-        p.disconnect()     
+        p.disconnect()   

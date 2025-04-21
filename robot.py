@@ -61,10 +61,53 @@ class ROBOT:
         # f.write(str(xPosition))
         # f.close()
 
-        bestJumpScore = 0
-        bestJumpHeight = 0
-        bestJumpDuration = 0
+        # bestJumpScore = 0
+        # bestJumpHeight = 0
+        # bestJumpDuration = 0
 
+        # currentStreak = 0
+        # streakStart = None
+
+        # for t, row in enumerate(self.sensorVals):
+        #     if row.sum() == len(row) * -1:
+        #         if currentStreak == 0:
+        #             streakStart = t
+        #         currentStreak += 1
+        #     else:
+        #         if currentStreak > 0 and streakStart is not None:
+        #             streakEnd = t
+        #             peak = max(self.zPositions[streakStart:streakEnd])
+        #             # print(peak, currentStreak)
+        #             jumpScore = peak * currentStreak  
+
+        #             if jumpScore > bestJumpScore:
+        #                 bestJumpScore = jumpScore
+        #                 bestJumpHeight = peak
+        #                 bestJumpDuration = currentStreak
+
+        #         currentStreak = 0
+        #         streakStart = None
+
+        # # Check final streak
+        # if currentStreak > 0 and streakStart is not None:
+        #     streakEnd = len(self.sensorVals)
+        #     peak = max(self.zPositions[streakStart:streakEnd])
+        #     # print(peak, currentStreak)
+        #     jumpScore = peak * currentStreak
+        #     if jumpScore > bestJumpScore:
+        #         bestJumpScore = jumpScore
+        #         bestJumpHeight = peak
+        #         bestJumpDuration = currentStreak
+
+        # basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
+        # basePosition = basePositionAndOrientation[0]
+        # xPosition = basePosition[0]
+        # yPosition = basePosition[1]
+
+        # z_velocities = np.diff(self.zPositions)
+        # max_velocity = max(z_velocities)
+
+        bestJumpDuration = 0
         currentStreak = 0
         streakStart = None
 
@@ -76,39 +119,19 @@ class ROBOT:
             else:
                 if currentStreak > 0 and streakStart is not None:
                     streakEnd = t
-                    peak = max(self.zPositions[streakStart:streakEnd])
-                    # print(peak, currentStreak)
-                    jumpScore = peak * currentStreak  
-
-                    if jumpScore > bestJumpScore:
-                        bestJumpScore = jumpScore
-                        bestJumpHeight = peak
+                    if currentStreak > bestJumpDuration:
                         bestJumpDuration = currentStreak
 
                 currentStreak = 0
                 streakStart = None
 
-        # Check final streak
         if currentStreak > 0 and streakStart is not None:
             streakEnd = len(self.sensorVals)
-            peak = max(self.zPositions[streakStart:streakEnd])
-            # print(peak, currentStreak)
-            jumpScore = peak * currentStreak
-            if jumpScore > bestJumpScore:
-                bestJumpScore = jumpScore
-                bestJumpHeight = peak
+            if currentStreak > bestJumpDuration:
                 bestJumpDuration = currentStreak
 
-        basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
-        basePosition = basePositionAndOrientation[0]
-        xPosition = basePosition[0]
-        yPosition = basePosition[1]
-
-        z_velocities = np.diff(self.zPositions)
-        max_velocity = max(z_velocities)
-
         f = open("tmp" + str(self.solutionID) + ".txt", "w")
-        f.write(str(bestJumpScore - 0.2 * (abs(xPosition) + abs(yPosition)) + 0.5 * max_velocity))
+        f.write(str(bestJumpDuration*c.sleepSize))
         f.close()
 
         os.system("mv " + "tmp" + str(self.solutionID) + ".txt " + "fitness" + str(self.solutionID) + ".txt")            

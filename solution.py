@@ -7,10 +7,11 @@ import constants as c
 
 class SOLUTION:
 
-    def __init__(self, myID):
+    def __init__(self, myID, testVariant):
         self.weights = np.random.rand(c.numSensorNeurons,c.numMotorNeurons)
         self.weights = self.weights * 2 - 1
         self.myID = myID
+        self.testVariant = testVariant
         
     def Start_Simulation(self, directOrGUI):
         self.Create_World()

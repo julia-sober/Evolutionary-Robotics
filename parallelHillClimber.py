@@ -2,27 +2,33 @@ from solution import SOLUTION
 import constants as c
 import copy
 import os
+import numpy as np
 
 class PARALLEL_HILL_CLIMBER:
 
-    def __init__(self):
+    def __init__(self, testVariant):
         os.system("rm brain*.nndf")
         os.system("rm fitness*.txt")
+        self.testVariant = testVariant
         self.parents = {}
         self.nextAvailableID = 0
         for i in range(0, c.populationSize):
-            self.parents[i] = SOLUTION(self.nextAvailableID)
+            self.parents[i] = SOLUTION(self.nextAvailableID, self.testVariant)
             self.nextAvailableID += 1
+        self.fitnessVals = np.zeros((c.populationSize, c.numberOfGenerations))
 
     def Evolve(self):
-        self.Evaluate(self.parents)
-        for currentGeneration in range(c.numberOfGenerations):
-            self.Evolve_For_One_Generation()
+        self.Evaluate(self.parents, 0)
+        for currentGeneration in range(1, c.numberOfGenerations):
+            self.Evolve_For_One_Generation(currentGeneration)
         
-    def Evolve_For_One_Generation(self):
+        np.savetxt("fitness_values.txt", self.fitnessVals)
+        np.save("fitness_values.npy", self.fitnessVals)
+        
+    def Evolve_For_One_Generation(self, currentGeneration):
         self.Spawn()
         self.Mutate()
-        self.Evaluate(self.children)
+        self.Evaluate(self.children, currentGeneration)
         # self.Print()
         self.Select()
 
@@ -42,12 +48,12 @@ class PARALLEL_HILL_CLIMBER:
             if self.parents[key].fitness < self.children[key].fitness:
                 self.parents[key] = copy.deepcopy(self.children[key])
 
-    def Evaluate(self, solutions):
+    def Evaluate(self, solutions, currentGeneration):
         for key in solutions:
             solutions[key].Start_Simulation("DIRECT")
-
         for key in solutions:
             solutions[key].Wait_For_Simulation_To_End()
+            self.fitnessVals[key, currentGeneration] = solutions[key].fitness
 
     def Print(self):
         print()
