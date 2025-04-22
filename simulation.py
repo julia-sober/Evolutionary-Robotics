@@ -45,7 +45,7 @@ class SIMULATION:
                 self.robot.Sense(timeStep)
                 self.robot.Think()
                 self.robot.Record_Position(timeStep)
-                self.robot.Act()
+                self.robot.Act(timeStep)
                 if self.directOrGUI == "GUI":
                     time.sleep(c.sleepSize)
 

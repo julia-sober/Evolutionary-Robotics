@@ -1,3 +1,5 @@
+import math
+
 numTimeSteps = 1000
 sleepSize = 1/180
 
@@ -8,5 +10,5 @@ numSensorNeurons = 4
 numMotorNeurons = 8
 numHiddenNeurons = 8
 
-torsoMotorJointRange = 0.7
-legMotorJointRange = 0.5
+torsoMotorJointRange = 0.85
+legMotorJointRange = 0.7

@@ -20,7 +20,7 @@ class SOLUTION:
         self.hiddenToMotorWeights = np.random.rand(c.numHiddenNeurons,c.numMotorNeurons)
         self.hiddenToMotorWeights = self.hiddenToMotorWeights * 2 - 1
 
-        self.recurrentWeights = np.random.rand(c.numSensorNeurons)
+        self.recurrentWeights = np.random.rand(c.numHiddenNeurons)
         self.recurrentWeights = self.recurrentWeights * 2 - 1
         
     def Start_Simulation(self, directOrGUI):
@@ -151,8 +151,9 @@ class SOLUTION:
                                         targetNeuronName=currentColumn+c.numHiddenNeurons+c.numSensorNeurons, 
                                         weight=self.hiddenToMotorWeights[currentRow][currentColumn])
                     
-            for currentRow in range(0,c.numSensorNeurons):
-                pyrosim.Send_Synapse(sourceNeuronName=currentRow, targetNeuronName=currentRow, weight=self.recurrentWeights[currentRow])
+            for currentRow in range(0,c.numHiddenNeurons):
+                pyrosim.Send_Synapse(sourceNeuronName=currentRow+c.numSensorNeurons, targetNeuronName=currentRow+c.numSensorNeurons, 
+                                     weight=self.recurrentWeights[currentRow])
                 
             pyrosim.End()
 
@@ -212,7 +213,7 @@ class SOLUTION:
                 randomColumn = random.randint(0,c.numMotorNeurons-1)
                 self.hiddenToMotorWeights[randomRow][randomColumn] = random.random() * 2 - 1
             elif coinFlip == 2:
-                randomRow = random.randint(0,c.numSensorNeurons-1)
+                randomRow = random.randint(0,c.numHiddenNeurons-1)
                 self.recurrentWeights[randomRow] = random.random() * 2 - 1
 
         elif self.testVariant == "C":
