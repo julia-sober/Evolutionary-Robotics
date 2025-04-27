@@ -7,7 +7,6 @@ import pyrosim.pyrosim as pyrosim
 from pyrosim.neuralNetwork import NEURAL_NETWORK
 import os
 import constants as c
-import shutil
 import time
 
 
@@ -112,10 +111,12 @@ class ROBOT:
                 bestJumpDuration = currentStreak
 
         if self.error or simulationError:
-            bestJumpDuration = np.nan
+            fitness = np.nan
+        else:
+            fitness = 20 * max(self.zPositions) + bestJumpDuration #+ max(self.zPositions) #np.mean(self.zPositions)
 
         f = open("tmp" + str(self.solutionID) + ".txt", "w")
-        f.write(str(bestJumpDuration))
+        f.write(str(fitness))
         f.close()
         time.sleep(0.1)
         os.rename("tmp" + str(self.solutionID) + ".txt", "fitness" + str(self.solutionID) + ".txt")      

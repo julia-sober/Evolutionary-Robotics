@@ -19,13 +19,13 @@ phc.Show_Best()
 
 time.sleep(c.numTimeSteps*c.sleepSize + 5)
 
-os.system("rm log*.txt")
-testVariant = "C"
-phc = PARALLEL_HILL_CLIMBER(testVariant)
-phc.Evolve()
-phc.Show_Best()
+# os.system("rm log*.txt")
+# testVariant = "C"
+# phc = PARALLEL_HILL_CLIMBER(testVariant)
+# phc.Evolve()
+# phc.Show_Best()
 
-time.sleep(c.numTimeSteps*c.sleepSize + 5)
+# time.sleep(c.numTimeSteps*c.sleepSize + 5)
 
 os.system("python3 plotFitnessValues.py")
 os.system("rm log*.txt")
