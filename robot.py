@@ -113,7 +113,7 @@ class ROBOT:
         if self.error or simulationError:
             fitness = np.nan
         else:
-            fitness = 20 * max(self.zPositions) + bestJumpDuration #+ max(self.zPositions) #np.mean(self.zPositions)
+            fitness = (bestJumpDuration/10)**2 #+ max(self.zPositions) #np.mean(self.zPositions)
 
         f = open("tmp" + str(self.solutionID) + ".txt", "w")
         f.write(str(fitness))

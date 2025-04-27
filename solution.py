@@ -218,28 +218,43 @@ class SOLUTION:
             for _ in range(c.mutationRate):
                 randomRow = random.randint(0,c.numSensorNeurons-1)
                 randomColumn = random.randint(0,c.numMotorNeurons-1)
-                self.weights[randomRow][randomColumn] = random.random() * 2 - 1
+                self.weights[randomRow][randomColumn] += random.gauss(0, 0.5)
+                if random.random() < 0.1:  
+                    self.weights[randomRow][randomColumn] = 0  
 
         if self.testVariant == "B":
             for _ in range(c.mutationRate):
                 randomRow = random.randint(0,c.numSensorNeurons-1)
                 randomColumn = random.randint(0,c.numHiddenNeurons-1)
-                self.sensorToHiddenWeights[randomRow][randomColumn] = random.random() * 2 - 1
+                self.sensorToHiddenWeights[randomRow][randomColumn] += random.gauss(0, 0.5)
+                if random.random() < 0.1:  
+                    self.sensorToHiddenWeights[randomRow][randomColumn] = 0  
+
                 randomRow = random.randint(0,c.numHiddenNeurons-1)
                 randomColumn = random.randint(0,c.numMotorNeurons-1)
-                self.hiddenToMotorWeights[randomRow][randomColumn] = random.random() * 2 - 1
+                self.hiddenToMotorWeights[randomRow][randomColumn] += random.gauss(0, 0.5)
+                if random.random() < 0.1:  
+                    self.hiddenToMotorWeights[randomRow][randomColumn] = 0
+
                 randomRow = random.randint(0,c.numHiddenNeurons-1)
                 randomColumn = random.randint(0,c.numHiddenNeurons-1)
-                self.recurrentWeights[randomRow][randomColumn] = random.random() * 2 - 1
+                self.recurrentWeights[randomRow][randomColumn] += random.gauss(0, 0.5)
+                if random.random() < 0.1:  
+                    self.recurrentWeights[randomRow][randomColumn] = 0
 
         elif self.testVariant == "C":
             for _ in range(c.mutationRate):
                 randomRow = random.randint(0,c.numSensorNeurons-1)
                 randomColumn = random.randint(0,c.numHiddenNeurons-1)
-                self.sensorToHiddenWeights[randomRow][randomColumn] = random.random() * 2 - 1
+                self.sensorToHiddenWeights[randomRow][randomColumn] += random.gauss(0, 0.5)
+                if random.random() < 0.1:  
+                    self.sensorToHiddenWeights[randomRow][randomColumn] = 0
+
                 randomRow = random.randint(0,c.numHiddenNeurons-1)
                 randomColumn = random.randint(0,c.numMotorNeurons-1)
-                self.hiddenToMotorWeights[randomRow][randomColumn] = random.random() * 2 - 1
+                self.hiddenToMotorWeights[randomRow][randomColumn] += random.gauss(0, 0.5)
+                if random.random() < 0.1:  
+                    self.hiddenToMotorWeights[randomRow][randomColumn] = 0
 
     def Set_ID(self, newID):
         self.myID = newID

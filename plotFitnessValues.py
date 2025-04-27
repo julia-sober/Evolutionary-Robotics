@@ -4,48 +4,33 @@ from scipy import stats
 import constants as c
 import os
 
-# Create data directory if it doesn't exist
-os.makedirs("data", exist_ok=True)
+fitness_A = np.load("data/fitness_values_A.npy")
+fitness_B = np.load("data/fitness_values_B.npy")
 
-# Load data with error handling
-try:
-    fitness_A = np.load("data/fitness_values_A.npy")
-    fitness_B = np.load("data/fitness_values_B.npy")
-except FileNotFoundError as e:
-    print(f"Error loading fitness data: {e}")
-    exit()
-
-# Calculate statistics
 avg_fitness_A = np.nanmean(fitness_A, axis=0)
 avg_fitness_B = np.nanmean(fitness_B, axis=0)
 std_fitness_A = np.nanstd(fitness_A, axis=0)
 std_fitness_B = np.nanstd(fitness_B, axis=0)
 
-# Calculate p-values for each generation
 p_values = []
 for gen in range(fitness_A.shape[1]):
-    # Remove NaN values for t-test
     clean_A = fitness_A[:, gen][~np.isnan(fitness_A[:, gen])]
     clean_B = fitness_B[:, gen][~np.isnan(fitness_B[:, gen])]
     
-    if len(clean_A) > 1 and len(clean_B) > 1:  # Need at least 2 samples for t-test
+    if len(clean_A) > 1 and len(clean_B) > 1:  
         _, p = stats.ttest_ind(clean_A, clean_B, equal_var=False)
         p_values.append(p)
     else:
         p_values.append(np.nan)
 
-# Convert to array and apply smoothing (optional)
 p_values = np.array(p_values)
-p_values_smoothed = np.convolve(p_values, np.ones(3)/3, mode='same')  # 3-generation moving average
+p_values_smoothed = np.convolve(p_values, np.ones(3)/3, mode='same')  
 
-# Create figure with two subplots
 plt.figure(figsize=(12, 10))
 gs = plt.GridSpec(2, 1, height_ratios=[3, 1])
 
-# Top plot: Fitness curves
 ax0 = plt.subplot(gs[0])
 
-# Plot individual runs (transparent)
 for run in fitness_A:
     ax0.plot(run, color='blue', alpha=0.1, linewidth=0.5)
 for run in fitness_B:
