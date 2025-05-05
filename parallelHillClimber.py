@@ -75,4 +75,18 @@ class PARALLEL_HILL_CLIMBER:
                 bestFitness = self.parents[key].fitness
                 bestParent = self.parents[key]
         bestParent.Start_Simulation("GUI")
+        print()
+        print(bestParent.myID)
         print(bestFitness)
+
+        if self.testVariant == "A":
+            weights = bestParent.weights
+            np.save("data/weights/weights_" + self.testVariant + ".npy", weights)
+        elif self.testVariant == "B":
+            sensorToHiddenWeights = bestParent.sensorToHiddenWeights
+            np.save("data/weights/sensorToHiddenWeights_" + self.testVariant + ".npy", sensorToHiddenWeights)
+            hiddenToMotorWeights = bestParent.hiddenToMotorWeights
+            np.save("data/weights/hiddenToMotorWeights_" + self.testVariant + ".npy", hiddenToMotorWeights)
+            recurrentWeights = bestParent.recurrentWeights
+            np.save("data/weights/recurrentWeights_" + self.testVariant + ".npy", recurrentWeights)
+

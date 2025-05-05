@@ -79,14 +79,7 @@ class ROBOT:
         zPosition = basePosition[2]
         self.zPositions[timeStep] = zPosition
 
-    def Get_Fitness(self, simulationError):
-        # basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
-        # basePosition = basePositionAndOrientation[0]
-        # xPosition = basePosition[0]
-        # f = open("tmp" + str(self.solutionID) + ".txt", "w")
-        # f.write(str(xPosition))
-        # f.close()
-        
+    def Get_Fitness(self, simulationError):        
         bestJumpDuration = 0
         currentStreak = 0
         streakStart = None
@@ -113,7 +106,11 @@ class ROBOT:
         if self.error or simulationError:
             fitness = np.nan
         else:
-            fitness = (bestJumpDuration/10)**2 #+ max(self.zPositions) #np.mean(self.zPositions)
+            fitness = bestJumpDuration**(1/2)
+            # fitness = max(self.zPositions)
+            # basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
+            # basePosition = basePositionAndOrientation[0]
+            # fitness = basePosition[0]
 
         f = open("tmp" + str(self.solutionID) + ".txt", "w")
         f.write(str(fitness))
